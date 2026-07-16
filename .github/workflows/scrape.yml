@@ -1,14 +1,14 @@
-name: Automated IPO Tracker
+name: Automated HKEX IPO Scan
 
 on:
   schedule:
-    - cron: '0 1 * * 1-5' # Runs Monday to Friday at 10:00 UTC (6:00 PM HKT)
+    # Runs everyday at 10:00 UTC (6:00 PM HKT)
+    - cron: '0 2 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
-  track_ipos:
+  scan:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -16,21 +16,20 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
-        cache: 'pip'
+        python-python-version: '3.11'
 
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests beautifulsoup4 yfinance pdfplumber pandas
+        pip install requests beautifulsoup4 pandas yfinance
 
-    - name: Run Scraper & Cross-Checkers
-      run: |
-        python scraper.py
+    - name: Run Scanner
+      run: python scanner.py
 
     - name: Commit and Push Changes
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add data/ipo_tracker.json data/ipo_tracker.csv
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update: Latest IPO Data & Market Caps" && git push)
+        git add hkex_ipo_data.json
+        git diff-index --quiet HEAD || git commit -m "Auto-updated HKEX IPO listings [skip ci]"
+        git push
