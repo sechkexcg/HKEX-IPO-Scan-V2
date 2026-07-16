@@ -2,7 +2,7 @@ name: Automated IPO Tracker
 
 on:
   schedule:
-    - cron: '0 10 * * 1-5' # Runs Monday to Friday at 10:00 UTC (6:00 PM HKT)
+    - cron: '0 1 * * 1-5' # Runs Monday to Friday at 10:00 UTC (6:00 PM HKT)
   workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
